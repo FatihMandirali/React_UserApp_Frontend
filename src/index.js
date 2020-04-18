@@ -4,9 +4,27 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import rootReducer from './reducers/rootReducer'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
+import logger from 'redux-logger'
+import { createPromise } from 'redux-promise-middleware'
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
+const store = createStore(
+    rootReducer, //tüm recurlarımızı tutar
+    composeWithDevTools(
+        applyMiddleware(createPromise(), thunk,logger)
+    )
+);
+
+ReactDOM.render(<BrowserRouter>
+    <Provider store={store}>
+        <App />
+    </Provider>
+</BrowserRouter>, document.getElementById('root'));
+
+
 serviceWorker.unregister();
